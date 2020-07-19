@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Serialization;
 using WebAPI.Models;
 
 namespace WebAPI
@@ -28,7 +30,12 @@ namespace WebAPI
         {
             services.AddDbContext<PaymentDetailContext>(options=>
                 options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
-            services.AddControllers();
+            
+            services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                var resolver = options.SerializerSettings.ContractResolver as DefaultContractResolver;
+                resolver.NamingStrategy = null;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
