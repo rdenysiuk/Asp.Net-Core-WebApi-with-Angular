@@ -36,6 +36,8 @@ namespace WebAPI
                 var resolver = options.SerializerSettings.ContractResolver as DefaultContractResolver;
                 resolver.NamingStrategy = null;
             });
+
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,7 +47,7 @@ namespace WebAPI
             {
                 app.UseDeveloperExceptionPage();
             }
-
+                        
             app.UseRouting();
 
             app.UseAuthorization();
@@ -54,6 +56,13 @@ namespace WebAPI
             {
                 endpoints.MapControllers();
             });
+
+            app.UseCors(options =>
+                options.WithOrigins("http://localhost:4200")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowAnyOrigin()
+            );
         }
     }
 }
