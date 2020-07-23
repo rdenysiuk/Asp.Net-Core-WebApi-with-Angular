@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.EntityFrameworkCore;
@@ -28,9 +29,9 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<PaymentDetailContext>(options=>
+            services.AddDbContext<PaymentDetailContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
-            
+
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 var resolver = options.SerializerSettings.ContractResolver as DefaultContractResolver;
@@ -47,22 +48,23 @@ namespace WebAPI
             {
                 app.UseDeveloperExceptionPage();
             }
-                        
+
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors(options =>
+               options.WithOrigins("Http://localhost:4200")
+                   .AllowAnyMethod()
+                   .AllowAnyHeader()
+           );
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
 
-            app.UseCors(options =>
-                options.WithOrigins("http://localhost:4200")
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowAnyOrigin()
-            );
+
         }
     }
 }
